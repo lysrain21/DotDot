@@ -6,8 +6,7 @@ import '../../bloc/task/task_event.dart';
 import '../../bloc/task/task_state.dart';
 import '../../models/task.dart';
 import '../../navigation/app_router.dart';
-import '../../components/ui/button.dart';
-import '../../components/ui/card.dart';
+import '../../theme/shadcn_theme.dart';
 
 class TaskInputPage extends StatefulWidget {
   const TaskInputPage({Key? key}) : super(key: key);
@@ -20,7 +19,6 @@ class _TaskInputPageState extends State<TaskInputPage> {
   final TextEditingController _taskController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _estimatedMinutesController = TextEditingController();
-  DateTime? _dueDate;
 
   @override
   void dispose() {
@@ -33,109 +31,217 @@ class _TaskInputPageState extends State<TaskInputPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Create Task'),
-        elevation: 0,
-      ),
+      backgroundColor: const Color(0xFFF3F3F3),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ShadcnCard(
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
+          child: SizedBox(
+            width: 400,
+            height: 600,
+            child: Stack(
+              children: [
+                // Pixel decorations
+                _buildPixelDecorations(),
+                
+                // Main content
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 45, vertical: 87),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        'What would you like to accomplish?',
-                        style: Theme.of(context).textTheme.headlineSmall,
-                      ),
-                      const SizedBox(height: 16),
-                      TextField(
-                        controller: _taskController,
-                        decoration: const InputDecoration(
-                          labelText: 'Task Title',
-                          hintText: 'e.g., Build a Flutter app for task management',
-                        ),
-                        maxLines: 1,
-                      ),
-                      const SizedBox(height: 16),
-                      TextField(
-                        controller: _descriptionController,
-                        decoration: const InputDecoration(
-                          labelText: 'Description (optional)',
-                          hintText: 'Add more details about your task...',
-                        ),
-                        maxLines: 3,
-                      ),
-                      const SizedBox(height: 16),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: TextField(
-                              controller: _estimatedMinutesController,
-                              decoration: const InputDecoration(
-                                labelText: 'Estimated Time',
-                                hintText: '30',
-                                suffixText: 'minutes',
-                              ),
-                              keyboardType: TextInputType.number,
-                            ),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: InkWell(
-                              onTap: () async {
-                                final date = await showDatePicker(
-                                  context: context,
-                                  initialDate: DateTime.now(),
-                                  firstDate: DateTime.now(),
-                                  lastDate: DateTime.now().add(const Duration(days: 365)),
-                                );
-                                if (date != null) {
-                                  setState(() {
-                                    _dueDate = date;
-                                  });
-                                }
-                              },
-                              child: InputDecorator(
-                                decoration: const InputDecoration(
-                                  labelText: 'Due Date',
-                                ),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      _dueDate != null
-                                          ? _dueDate!.toString().split(' ')[0]
-                                          : 'Select date',
-                                    ),
-                                    const Icon(Icons.calendar_today, size: 16),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+                      // Header text
+                      _buildHeaderText(),
+                      const SizedBox(height: 90),
+                      
+                      // Input area
+                      _buildInputArea(),
+                      
+                      const Spacer(),
+                      
+                      // Start button
+                      _buildStartButton(),
                     ],
                   ),
                 ),
-              ),
-              const SizedBox(height: 24),
-              Center(
-                child: ShadcnButton(
-                  onPressed: _createTask,
-                  child: const Text('Create Task'),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPixelDecorations() {
+    return Stack(
+      children: [
+        // Left decoration group
+        Positioned(left: 41, top: 0, child: _pixelBox(25, 25, Colors.white)),
+        Positioned(left: 1, top: 25, child: _pixelBox(108, 25, Colors.white)),
+        Positioned(left: 21, top: 50, child: _pixelBox(115, 24, Colors.white)),
+        Positioned(left: 136, top: 25, child: _pixelBox(25, 25, Colors.white)),
+        Positioned(left: -25, top: 49, child: _pixelBox(25, 25, Colors.white)),
+        Positioned(left: 41, top: 74, child: _pixelBox(58, 25, Colors.white)),
+        
+        // Right decoration group
+        Positioned(left: 375, top: 80, child: _pixelBox(25, 25, Colors.white)),
+        Positioned(left: 318, top: 105, child: _pixelBox(108, 25, Colors.white)),
+        Positioned(left: 344, top: 130, child: _pixelBox(108, 24, Colors.white)),
+        Positioned(left: 343, top: 105, child: _pixelBox(25, 25, Colors.white)),
+        Positioned(left: 407, top: 80, child: _pixelBox(25, 25, Colors.white)),
+        Positioned(left: 373, top: 154, child: _pixelBox(58, 25, Colors.white)),
+      ],
+    );
+  }
+
+  Widget _buildHeaderText() {
+    return Stack(
+      children: [
+        Positioned(
+          left: -5,
+          top: 1,
+          child: Container(
+            width: 157,
+            height: 26,
+            color: const Color(0xFF3B3B3B),
+          ),
+        ),
+        Positioned(
+          left: 15,
+          top: 26,
+          child: Container(
+            width: 239,
+            height: 32,
+            color: const Color(0xFF3B3B3B),
+          ),
+        ),
+        const Text(
+          '我想做一个软件，\n它的主要功能是拆解任务。',
+          style: TextStyle(
+            fontFamily: 'monospace',
+            fontSize: 20,
+            height: 1.45,
+            fontWeight: FontWeight.w400,
+            color: Color(0xFFCFFF0B),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildInputArea() {
+    return Stack(
+      children: [
+        // Background shadows
+        Positioned(
+          left: 16,
+          top: 11,
+          child: Container(
+            width: 271,
+            height: 112,
+            color: Colors.black,
+          ),
+        ),
+        
+        // Main input box
+        Container(
+          width: 282,
+          height: 117,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border.all(color: Colors.black, width: 1),
+          ),
+          child: Stack(
+            children: [
+              // Corner pixels
+              Positioned(left: 0, top: 0, child: _pixelBox(8, 8, const Color(0xFFD9D9D9))),
+              Positioned(left: 0, bottom: 0, child: _pixelBox(8, 8, const Color(0xFFD9D9D9))),
+              Positioned(right: 0, top: 0, child: _pixelBox(8, 8, const Color(0xFFD9D9D9))),
+              Positioned(right: 0, bottom: 0, child: _pixelBox(8, 8, const Color(0xFFD9D9D9))),
+              
+              // TextField
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: TextField(
+                  controller: _taskController,
+                  maxLines: 4,
+                  decoration: const InputDecoration(
+                    hintText: '我想在xx分钟内做一个xxx....',
+                    hintStyle: TextStyle(
+                      color: Color(0xFFD7D7D7),
+                      fontSize: 12,
+                      fontFamily: 'Inter',
+                    ),
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontFamily: 'Inter',
+                    color: Colors.black,
+                  ),
                 ),
               ),
             ],
           ),
         ),
+      ],
+    );
+  }
+
+  Widget _buildStartButton() {
+    return Center(
+      child: GestureDetector(
+        onTap: _createTask,
+        child: Stack(
+          children: [
+            Positioned(
+              left: 6.5,
+              top: 6.5,
+              child: Container(
+                width: 167,
+                height: 42,
+                color: const Color(0xFF3B3B3B),
+              ),
+            ),
+            Container(
+              width: 167,
+              height: 42,
+              decoration: BoxDecoration(
+                color: const Color(0xFFCFFF0B),
+                border: Border.all(color: Colors.black, width: 1),
+              ),
+              child: Stack(
+                children: [
+                  // Corner pixels
+                  Positioned(left: 0, top: 0, child: _pixelBox(6.5, 6.5, const Color(0xFFD9D9D9))),
+                  Positioned(left: 0, bottom: 0, child: _pixelBox(6.5, 7.9, const Color(0xFFD9D9D9))),
+                  Positioned(right: 0, top: 0, child: _pixelBox(6.5, 6.5, const Color(0xFFD9D9D9))),
+                  Positioned(right: 0, bottom: 0, child: _pixelBox(6.5, 7.9, const Color(0xFFD9D9D9))),
+                  
+                  const Center(
+                    child: Text(
+                      '开始！',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontFamily: 'monospace',
+                        fontWeight: FontWeight.w400,
+                        color: Color(0xFF3B3B3B),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
+    );
+  }
+
+  Widget _pixelBox(double width, double height, Color color) {
+    return Container(
+      width: width,
+      height: height,
+      color: color,
     );
   }
 
@@ -153,19 +259,16 @@ class _TaskInputPageState extends State<TaskInputPage> {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => Center(
-        child: ShadcnCard(
+      builder: (context) => const Center(
+        child: Card(
           child: Padding(
-            padding: const EdgeInsets.all(24.0),
+            padding: EdgeInsets.all(24.0),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const CircularProgressIndicator(),
-                const SizedBox(height: 16),
-                Text(
-                  'Creating task with AI...',
-                  style: Theme.of(context).textTheme.bodyLarge,
-                ),
+                CircularProgressIndicator(),
+                SizedBox(height: 16),
+                Text('Creating task with AI...'),
               ],
             ),
           ),
