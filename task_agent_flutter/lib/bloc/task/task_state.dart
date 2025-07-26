@@ -29,3 +29,12 @@ class TaskError extends TaskState {
   @override
   List<Object> get props => [message];
 }
+
+class TaskWithAllStepsCompleted extends TaskState {
+  final Task task;
+
+  const TaskWithAllStepsCompleted(this.task);
+
+  @override
+  List<Object> get props => [task];
+}

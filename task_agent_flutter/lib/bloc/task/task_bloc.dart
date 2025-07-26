@@ -71,6 +71,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       await apiService.updateStep(event.stepId, done: event.done);
       if (state is TaskLoaded) {
         final currentTasks = (state as TaskLoaded).tasks;
+        Task? targetTask;
         final updatedTasks = currentTasks.map((task) {
           if (task.id == event.taskId) {
             final updatedSteps = task.steps.map((step) {
@@ -79,11 +80,25 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
               }
               return step;
             }).toList();
-            return task.copyWith(steps: updatedSteps);
+            
+            targetTask = task.copyWith(steps: updatedSteps);
+            return targetTask!;
           }
           return task;
         }).toList();
-        emit(TaskLoaded(updatedTasks));
+        
+        // Check if all steps are now completed for the target task
+        if (targetTask != null && targetTask!.steps.isNotEmpty && 
+            targetTask!.steps.every((step) => step.done)) {
+          // All steps completed, emit navigation state
+          print('All steps completed for task ${targetTask!.id}, navigating to completion review');
+          emit(TaskWithAllStepsCompleted(targetTask!));
+          // After navigation, ensure we go back to normal loaded state
+          emit(TaskLoaded(updatedTasks));
+        } else {
+          // Not all steps completed, emit normal loaded state
+          emit(TaskLoaded(updatedTasks));
+        }
       }
     } catch (e) {
       emit(TaskError('Failed to update step: ${e.toString()}'));
