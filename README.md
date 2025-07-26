@@ -1,6 +1,44 @@
-# TaskAgent - AI-Powered Task Management for macOS
+# DotDot - AI-Powered Task Management 
 
-A native macOS menu-bar application that uses AI to automatically break down tasks into manageable steps and track your daily productivity.
+A  application that uses AI to automatically break down tasks into manageable steps and track your daily productivity.
+
+## 参加赛道说明
+
+## 主题 - One World 智能向善
+
+让ADHD的朋友重新找回注意力
+
+### kimi
+
+使用Kimi K2辅助构建
+
+### 小红书公司
+
+在小红书上进行公开构建，且DotDot是一个生活类AI小工具
+
+### YouWare
+
+构建NFT市场与AI生图网站
+
+### Injective
+
+拆解任务执行完成后，依据拆解任务AI生成NFT上链Injective，网站链接：https://www.youware.com/project/u0da8xh32e?enter_from=share
+
+### BNB
+
+拆解任务执行完成后，依据拆解任务AI生成NFT上链Injective，网站链接：https://www.youware.com/project/u0da8xh32e?enter_from=share
+
+### 科技向善Oneness AI
+
+依据任务拆解agent、文生图agent形成任务执行以及反馈的循环，帮助ADHD朋友变成更好的自己
+
+### Paraflow
+
+快速生成产品设计雏形
+
+### FinalRound AI
+
+一人公司、超级个体能够正常工作的辅助工具
 
 ## 🚀 Quick Start
 
