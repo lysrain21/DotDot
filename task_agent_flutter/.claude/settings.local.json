@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(flutter doctor:*)",
+      "Bash(flutter devices:*)",
+      "Bash(flutter pub:*)",
+      "Bash(flutter run:*)",
+      "Bash(conda activate py310)",
+      "Bash(python:*)",
+      "Bash(source:*)",
+      "Bash(lsof:*)",
+      "Bash(curl:*)",
+      "Bash(find:*)",
+      "Bash(grep:*)",
+      "Bash(dart analyze:*)"
+    ],
+    "deny": []
+  }
+}

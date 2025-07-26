@@ -1,0 +1,100 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  backend-tests:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Install dependencies
+      run: |
+        cd backend
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pytest pytest-asyncio
+    
+    - name: Run tests
+      run: |
+        cd backend
+        pytest tests/ -v
+    
+    - name: Run linting
+      run: |
+        cd backend
+        pip install flake8
+        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+
+  flutter-tests:
+    runs-on: macos-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.24.0'
+        channel: 'stable'
+    
+    - name: Install dependencies
+      run: |
+        cd task_agent_flutter
+        flutter pub get
+    
+    - name: Run tests
+      run: |
+        cd task_agent_flutter
+        flutter test
+    
+    - name: Build macOS app
+      run: |
+        cd task_agent_flutter
+        flutter build macos --release
+
+  build-and-package:
+    needs: [backend-tests, flutter-tests]
+    runs-on: macos-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.24.0'
+        channel: 'stable'
+    
+    - name: Install Python dependencies
+      run: |
+        cd backend
+        pip install -r requirements.txt pyinstaller
+    
+    - name: Build application
+      run: ./scripts/build.sh
+    
+    - name: Create DMG
+      run: ./scripts/package.sh
+    
+    - name: Upload DMG
+      uses: actions/upload-artifact@v3
+      with:
+        name: TaskAgent-macOS
+        path: package/TaskAgent.dmg
