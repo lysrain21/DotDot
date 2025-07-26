@@ -77,15 +77,6 @@ class _TaskInputPageState extends State<TaskInputPage> {
       children: [
         // Input area - Group 49 (exact CSS positions)
         Positioned(
-          left: 73,
-          top: 238,
-          child: Container(
-            width: 271,
-            height: 112,
-            color: const Color(0xFF3B3B3B),
-          ),
-        ),
-        Positioned(
           left: 57,
           top: 227,
           child: _buildInputArea(),
@@ -119,54 +110,73 @@ class _TaskInputPageState extends State<TaskInputPage> {
 
   Widget _buildInputArea() {
     return SizedBox(
-      width: 282,
-      height: 117,
+      width: 287,
+      height: 123,
       child: Stack(
         children: [
-          // Main input box (Rectangle 194)
-          Container(
-            width: 282,
-            height: 117,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              border: Border.all(color: const Color(0xFF3B3B3B), width: 1),
+          // Main container (Group 49)
+          Positioned(
+            left: 0,
+            top: 0,
+            child: Container(
+              width: 287,
+              height: 123,
+              decoration: BoxDecoration(
+                color: Colors.transparent,
+              ),
             ),
           ),
           
-          // Corner pixels (Group 40)
-          Positioned(left: 0, top: 0, child: _pixelBox(8, 8, const Color(0xFFD9D9D9))),
-          Positioned(left: 0, bottom: 0, child: _pixelBox(8, 8, const Color(0xFFD9D9D9))),
-          Positioned(right: 0, top: 0, child: _pixelBox(8, 8, const Color(0xFFD9D9D9))),
-          Positioned(right: 0, bottom: 0, child: _pixelBox(8, 8, const Color(0xFFD9D9D9))),
           
-          // TextField with exact positioning
+          
+          // Updated corner pixel for new input field
           Positioned(
-            left: 75 - 57, // 18px from left
-            top: 241 - 227, // 14px from top
-            child: SizedBox(
-              width: 282 - 75 + 57 - 18, // Remaining width
-              height: 117 - 14 - (241 - 227), // Remaining height
-              child: TextField(
-                controller: _taskController,
-                maxLines: 4,
-                decoration: const InputDecoration(
-                  hintText: '我想在xx分钟内做一个xxx....',
-                  hintStyle: TextStyle(
-                    color: Color(0xFFD7D7D7),
-                    fontSize: 12,
-                    fontFamily: 'Inter',
-                    fontWeight: FontWeight.w400,
-                    height: 15 / 12,
+            left: 75 - 57 + 245 - 8, // right edge of new input field
+            top: 241 - 227 + 85 - 8, // bottom edge of new input field
+            child: Container(
+              width: 8,
+              height: 8,
+              color: const Color(0xFFD9D9D9),
+            ),
+          ),
+          
+          // Enhanced TextField area - removed black bar, larger text
+          Positioned(
+            left: 75 - 57, // 18px from left of Group 49
+            top: 241 - 227, // 14px from top of Group 49
+            child: Container(
+              width: 245,
+              height: 85,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                border: Border.all(color: const Color(0xFF3B3B3B), width: 2),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                child: TextField(
+                  controller: _taskController,
+                  maxLines: 3,
+                  textAlignVertical: TextAlignVertical.top,
+                  decoration: const InputDecoration(
+                    hintText: '我想在xx分钟内做一个xxx....',
+                    hintStyle: TextStyle(
+                      color: Color(0xFF9E9E9E),
+                      fontSize: 16,
+                      fontFamily: 'Source Han Sans CN',
+                      fontWeight: FontWeight.w400,
+                      height: 1.4,
+                    ),
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.zero,
+                    isDense: true,
                   ),
-                  border: InputBorder.none,
-                  contentPadding: EdgeInsets.zero,
-                ),
-                style: const TextStyle(
-                  fontSize: 12,
-                  fontFamily: 'Inter',
-                  fontWeight: FontWeight.w400,
-                  color: Colors.black,
-                  height: 15 / 12,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontFamily: 'Source Han Sans CN',
+                    fontWeight: FontWeight.w400,
+                    color: Color(0xFF2D2D2D),
+                    height: 1.4,
+                  ),
                 ),
               ),
             ),

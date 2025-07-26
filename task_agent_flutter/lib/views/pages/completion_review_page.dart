@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:task_agent_flutter/navigation/app_router.dart';
 
 class CompletionReviewPage extends StatelessWidget {
@@ -23,6 +24,63 @@ class CompletionReviewPage extends StatelessWidget {
       return '你今天做完了 $taskCount 件事， $stepsCount 个步骤。 用时 $timeSpent';
     } catch (e) {
       return '你今天做完了 1 件事， 9 个步骤。 用时 2h45min';
+    }
+  }
+
+  void _copyCompletedTasks(BuildContext context) {
+    try {
+      // Simple extraction that avoids special characters
+      final lines = summary.split('\n');
+      final cleanLines = <String>[];
+      
+      for (final line in lines) {
+        String cleanLine = line.trim();
+        
+        // Remove emojis and special symbols - simplified regex
+        cleanLine = cleanLine
+            .replaceAll(RegExp(r'[^\x00-\x7F\u4e00-\u9fff\d.\s-]'), '')
+            .replaceAll(RegExp(r'\s+'), ' ')
+            .trim();
+            
+        if (cleanLine.isNotEmpty) {
+          // Handle numbered steps
+          if (RegExp(r'^\d+[.、)\s]').hasMatch(cleanLine)) {
+            cleanLine = cleanLine.replaceFirst(RegExp(r'^\d+[.、)\s]+'), '').trim();
+          }
+          
+          // Skip common headers
+          if (!cleanLine.contains('任务完成总结') && 
+              !cleanLine.contains('任务详情') && 
+              !cleanLine.contains('AI生成的拆解步骤') &&
+              cleanLine.length > 2) {
+            cleanLines.add(cleanLine);
+          }
+        }
+      }
+      
+      String taskContent = cleanLines.join('\n');
+      
+      // Ensure safe UTF-8 encoding - simplified
+      taskContent = taskContent.replaceAll(RegExp(r'[^\x00-\x7F\u4e00-\u9fff\w\s.,!?;:()\[\]{}]'), '');
+      
+      // Copy to clipboard
+      Clipboard.setData(ClipboardData(text: taskContent.trim()));
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('任务已复制'),
+          duration: Duration(seconds: 1),
+        ),
+      );
+    } catch (e) {
+      // Fallback: copy basic text
+      Clipboard.setData(ClipboardData(text: '任务完成'));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('复制完成'),
+          duration: Duration(seconds: 1),
+        ),
+      );
     }
   }
 
@@ -146,6 +204,15 @@ class CompletionReviewPage extends StatelessWidget {
                     context,
                     AppRouter.achievements,
                   );
+                }),
+              ),
+              
+              // Copy button - Added below existing buttons
+              Positioned(
+                left: 132,
+                top: 470,
+                child: _buildPixelButton(context, '复制任务', () {
+                  _copyCompletedTasks(context);
                 }),
               ),
             ],

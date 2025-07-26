@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:task_agent_flutter/bloc/task/task_bloc.dart';
 import 'package:task_agent_flutter/bloc/task/task_state.dart';
 import 'package:task_agent_flutter/models/task.dart';
@@ -70,6 +71,13 @@ class AchievementPage extends StatelessWidget {
                 left: 50,
                 top: 480,
                 child: _buildTodayHighlight(),
+              ),
+              
+              // Generate exclusive achievement link
+              Positioned(
+                left: 50,
+                top: 520,
+                child: _buildGenerateAchievementLink(context),
               ),
               
               // Back button
@@ -301,6 +309,52 @@ Widget _buildBackButton(BuildContext context) {
         child: const Center(
           child: Text(
             '返回',
+            style: TextStyle(
+              fontFamily: 'Source Han Sans CN',
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              color: Color(0xFF3B3B3B),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildGenerateAchievementLink(BuildContext context) {
+    return GestureDetector(
+      onTap: () async {
+        const url = 'https://www.youware.com/project/u0da8xh32e?enter_from=share';
+        final uri = Uri.parse(url);
+        
+        try {
+          if (await canLaunchUrl(uri)) {
+            await launchUrl(
+              uri,
+              mode: LaunchMode.externalApplication,
+            );
+          } else {
+            throw '无法打开链接';
+          }
+        } catch (e) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('无法打开链接: $e'),
+              duration: const Duration(seconds: 2),
+            ),
+          );
+        }
+      },
+      child: Container(
+        width: 300,
+        height: 35,
+        decoration: BoxDecoration(
+          color: const Color(0xFFCFFF0B),
+          border: Border.all(color: const Color(0xFF3B3B3B), width: 1),
+        ),
+        child: const Center(
+          child: Text(
+            '去生成专属成就',
             style: TextStyle(
               fontFamily: 'Source Han Sans CN',
               fontSize: 14,
