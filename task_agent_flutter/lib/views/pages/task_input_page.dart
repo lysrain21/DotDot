@@ -33,37 +33,17 @@ class _TaskInputPageState extends State<TaskInputPage> {
     return Scaffold(
       backgroundColor: const Color(0xFFF3F3F3),
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: SizedBox(
-            width: 400,
-            height: 600,
-            child: Stack(
-              children: [
-                // Pixel decorations
-                _buildPixelDecorations(),
-                
-                // Main content
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 45, vertical: 87),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Header text
-                      _buildHeaderText(),
-                      const SizedBox(height: 90),
-                      
-                      // Input area
-                      _buildInputArea(),
-                      
-                      const Spacer(),
-                      
-                      // Start button
-                      _buildStartButton(),
-                    ],
-                  ),
-                ),
-              ],
-            ),
+        child: SizedBox(
+          width: 400,
+          height: 600,
+          child: Stack(
+            children: [
+              // Pixel decorations
+              _buildPixelDecorations(),
+              
+              // Main content
+              _buildMainContent(),
+            ],
           ),
         ),
       ),
@@ -73,157 +53,172 @@ class _TaskInputPageState extends State<TaskInputPage> {
   Widget _buildPixelDecorations() {
     return Stack(
       children: [
-        // Left decoration group
-        Positioned(left: 41, top: 0, child: _pixelBox(25, 25, Colors.white)),
-        Positioned(left: 1, top: 25, child: _pixelBox(108, 25, Colors.white)),
+        // Left decoration group - Group 54 (exact CSS positions)
+        Positioned(left: 41.28, top: 74.08, child: _pixelBox(58.49, 24.95, Colors.white)),
+        Positioned(left: 0.73, top: 24.95, child: _pixelBox(108.39, 24.95, Colors.white)),
         Positioned(left: 21, top: 50, child: _pixelBox(115, 24, Colors.white)),
-        Positioned(left: 136, top: 25, child: _pixelBox(25, 25, Colors.white)),
-        Positioned(left: -25, top: 49, child: _pixelBox(25, 25, Colors.white)),
-        Positioned(left: 41, top: 74, child: _pixelBox(58, 25, Colors.white)),
+        Positioned(left: 136, top: 25, child: _pixelBox(24.95, 24.95, Colors.white)),
+        Positioned(left: -25, top: 49.13, child: _pixelBox(24.95, 24.95, Colors.white)),
+        Positioned(left: 41.28, top: 0, child: _pixelBox(24.95, 24.95, Colors.white)),
         
-        // Right decoration group
-        Positioned(left: 375, top: 80, child: _pixelBox(25, 25, Colors.white)),
-        Positioned(left: 318, top: 105, child: _pixelBox(108, 25, Colors.white)),
-        Positioned(left: 344, top: 130, child: _pixelBox(108, 24, Colors.white)),
-        Positioned(left: 343, top: 105, child: _pixelBox(25, 25, Colors.white)),
-        Positioned(left: 407, top: 80, child: _pixelBox(25, 25, Colors.white)),
-        Positioned(left: 373, top: 154, child: _pixelBox(58, 25, Colors.white)),
+        // Right decoration group - Group 55 (exact CSS positions with transforms)
+        Positioned(left: 318, top: 104.95, child: _pixelBox(108.39, 24.95, Colors.white)),
+        Positioned(left: 343.73, top: 129.91, child: _pixelBox(108.39, 24.17, Colors.white)),
+        Positioned(left: 318, top: 104.95, child: _pixelBox(24.95, 24.95, Colors.white)),
+        Positioned(left: 406.9, top: 80, child: _pixelBox(24.95, 24.95, Colors.white)),
+        Positioned(left: 373.37, top: 154.08, child: _pixelBox(58.49, 24.95, Colors.white)),
+        Positioned(left: 473.18, top: 129.13, child: _pixelBox(24.95, 24.95, Colors.white)),
       ],
     );
   }
 
-  Widget _buildHeaderText() {
+  Widget _buildMainContent() {
     return Stack(
       children: [
+        // Input area - Group 49 (exact CSS positions)
         Positioned(
-          left: -5,
-          top: 1,
+          left: 73,
+          top: 238,
           child: Container(
-            width: 157,
-            height: 26,
+            width: 271,
+            height: 112,
             color: const Color(0xFF3B3B3B),
           ),
         ),
         Positioned(
-          left: 15,
-          top: 26,
-          child: Container(
-            width: 239,
-            height: 32,
-            color: const Color(0xFF3B3B3B),
+          left: 57,
+          top: 227,
+          child: _buildInputArea(),
+        ),
+        
+        // Header text - Group 57 (exact CSS positions)
+        Positioned(
+          left: 57,
+          top: 180,
+          child: const Text(
+            '你想做什么?',
+            style: TextStyle(
+              fontFamily: 'Source Han Sans CN',
+              fontSize: 24,
+              fontWeight: FontWeight.w400,
+              height: 36 / 24,
+              color: Color(0xFF2D2D2D),
+            ),
           ),
         ),
-        const Text(
-          '我想做一个软件，\n它的主要功能是拆解任务。',
-          style: TextStyle(
-            fontFamily: 'monospace',
-            fontSize: 20,
-            height: 1.45,
-            fontWeight: FontWeight.w400,
-            color: Color(0xFFCFFF0B),
-          ),
+        
+        // Start button - Group 42 (exact CSS positions)
+        Positioned(
+          left: 118,
+          top: 376,
+          child: _buildStartButton(),
         ),
       ],
     );
   }
 
   Widget _buildInputArea() {
-    return Stack(
-      children: [
-        // Background shadows
-        Positioned(
-          left: 16,
-          top: 11,
-          child: Container(
-            width: 271,
-            height: 112,
-            color: Colors.black,
+    return SizedBox(
+      width: 282,
+      height: 117,
+      child: Stack(
+        children: [
+          // Main input box (Rectangle 194)
+          Container(
+            width: 282,
+            height: 117,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border.all(color: const Color(0xFF3B3B3B), width: 1),
+            ),
           ),
-        ),
-        
-        // Main input box
-        Container(
-          width: 282,
-          height: 117,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            border: Border.all(color: Colors.black, width: 1),
-          ),
-          child: Stack(
-            children: [
-              // Corner pixels
-              Positioned(left: 0, top: 0, child: _pixelBox(8, 8, const Color(0xFFD9D9D9))),
-              Positioned(left: 0, bottom: 0, child: _pixelBox(8, 8, const Color(0xFFD9D9D9))),
-              Positioned(right: 0, top: 0, child: _pixelBox(8, 8, const Color(0xFFD9D9D9))),
-              Positioned(right: 0, bottom: 0, child: _pixelBox(8, 8, const Color(0xFFD9D9D9))),
-              
-              // TextField
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: TextField(
-                  controller: _taskController,
-                  maxLines: 4,
-                  decoration: const InputDecoration(
-                    hintText: '我想在xx分钟内做一个xxx....',
-                    hintStyle: TextStyle(
-                      color: Color(0xFFD7D7D7),
-                      fontSize: 12,
-                      fontFamily: 'Inter',
-                    ),
-                    border: InputBorder.none,
-                    contentPadding: EdgeInsets.zero,
-                  ),
-                  style: const TextStyle(
+          
+          // Corner pixels (Group 40)
+          Positioned(left: 0, top: 0, child: _pixelBox(8, 8, const Color(0xFFD9D9D9))),
+          Positioned(left: 0, bottom: 0, child: _pixelBox(8, 8, const Color(0xFFD9D9D9))),
+          Positioned(right: 0, top: 0, child: _pixelBox(8, 8, const Color(0xFFD9D9D9))),
+          Positioned(right: 0, bottom: 0, child: _pixelBox(8, 8, const Color(0xFFD9D9D9))),
+          
+          // TextField with exact positioning
+          Positioned(
+            left: 75 - 57, // 18px from left
+            top: 241 - 227, // 14px from top
+            child: SizedBox(
+              width: 282 - 75 + 57 - 18, // Remaining width
+              height: 117 - 14 - (241 - 227), // Remaining height
+              child: TextField(
+                controller: _taskController,
+                maxLines: 4,
+                decoration: const InputDecoration(
+                  hintText: '我想在xx分钟内做一个xxx....',
+                  hintStyle: TextStyle(
+                    color: Color(0xFFD7D7D7),
                     fontSize: 12,
                     fontFamily: 'Inter',
-                    color: Colors.black,
+                    fontWeight: FontWeight.w400,
+                    height: 15 / 12,
                   ),
+                  border: InputBorder.none,
+                  contentPadding: EdgeInsets.zero,
+                ),
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontFamily: 'Inter',
+                  fontWeight: FontWeight.w400,
+                  color: Colors.black,
+                  height: 15 / 12,
                 ),
               ),
-            ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
   Widget _buildStartButton() {
-    return Center(
-      child: GestureDetector(
-        onTap: _createTask,
+    return GestureDetector(
+      onTap: _createTask,
+      child: SizedBox(
+        width: 166.93,
+        height: 42.41,
         child: Stack(
           children: [
+            // Shadow background (Subtract)
             Positioned(
-              left: 6.5,
-              top: 6.5,
+              left: 6.58,
+              top: 6.58,
               child: Container(
-                width: 167,
-                height: 42,
+                width: 166.93,
+                height: 42.41,
                 color: const Color(0xFF3B3B3B),
               ),
             ),
+            
+            // Main button (Rectangle 194)
             Container(
-              width: 167,
-              height: 42,
+              width: 166.93,
+              height: 42.41,
               decoration: BoxDecoration(
                 color: const Color(0xFFCFFF0B),
-                border: Border.all(color: Colors.black, width: 1),
+                border: Border.all(color: const Color(0xFF3B3B3B), width: 1),
               ),
               child: Stack(
                 children: [
-                  // Corner pixels
-                  Positioned(left: 0, top: 0, child: _pixelBox(6.5, 6.5, const Color(0xFFD9D9D9))),
-                  Positioned(left: 0, bottom: 0, child: _pixelBox(6.5, 7.9, const Color(0xFFD9D9D9))),
-                  Positioned(right: 0, top: 0, child: _pixelBox(6.5, 6.5, const Color(0xFFD9D9D9))),
-                  Positioned(right: 0, bottom: 0, child: _pixelBox(6.5, 7.9, const Color(0xFFD9D9D9))),
+                  // Corner pixels (Group 40)
+                  Positioned(left: 0, top: 0, child: _pixelBox(6.58, 6.58, const Color(0xFFD9D9D9))),
+                  Positioned(left: 0, bottom: 0, child: _pixelBox(6.58, 7.9, const Color(0xFFD9D9D9))),
+                  Positioned(right: 0, top: 0, child: _pixelBox(6.58, 6.58, const Color(0xFFD9D9D9))),
+                  Positioned(right: 0, bottom: 0, child: _pixelBox(6.58, 7.9, const Color(0xFFD9D9D9))),
                   
                   const Center(
                     child: Text(
-                      '开始！',
+                      '开始!',
                       style: TextStyle(
                         fontSize: 16,
-                        fontFamily: 'monospace',
+                        fontFamily: 'Source Han Sans CN',
                         fontWeight: FontWeight.w400,
+                        height: 24 / 16,
                         color: Color(0xFF3B3B3B),
                       ),
                     ),
@@ -284,21 +279,28 @@ class _TaskInputPageState extends State<TaskInputPage> {
         waitForCompletion: true,
       ));
       
-      // Wait for the task to be created and then navigate to its detail
-      await Future.delayed(const Duration(seconds: 2));
-      
-      if (mounted) {
-        Navigator.pop(context); // Close loading dialog
-        Navigator.pop(context); // Return to task list
-        
-        // Find the newly created task and navigate to its detail
-        final state = context.read<TaskBloc>().state;
+      // Listen for the task creation completion
+      final bloc = context.read<TaskBloc>();
+      await for (final state in bloc.stream) {
         if (state is TaskLoaded) {
           final newTask = state.tasks.firstWhere(
             (t) => t.title == taskTitle,
             orElse: () => state.tasks.first,
           );
-          Navigator.pushNamed(context, '/task-detail', arguments: newTask);
+          
+          if (mounted) {
+            Navigator.pop(context); // Close loading dialog
+            Navigator.pushNamed(context, '/task-detail', arguments: newTask);
+          }
+          break;
+        } else if (state is TaskError) {
+          if (mounted) {
+            Navigator.pop(context); // Close loading dialog
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('创建任务失败: ${state.message}')),
+            );
+          }
+          break;
         }
       }
     } catch (e) {

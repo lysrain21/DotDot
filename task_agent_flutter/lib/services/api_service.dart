@@ -41,7 +41,7 @@ class ApiService {
     try {
       final response = await _dio.post(
         '/tasks/',
-        data: {'title': title, 'use_ai': true},
+        data: {'title': title, 'use_ai': true, 'max_steps': 9},
       );
       return Task.fromJson(response.data);
     } catch (e) {
@@ -53,7 +53,7 @@ class ApiService {
     try {
       final response = await _dio.post(
         '/tasks/',
-        data: {'title': title, 'use_ai': true, 'stream': true},
+        data: {'title': title, 'use_ai': true, 'stream': true, 'max_steps': 9},
         options: Options(
           responseType: ResponseType.stream,
         ),
