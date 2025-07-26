@@ -74,13 +74,12 @@ class _TaskDetailPageState extends State<TaskDetailPage> {
                       child: SizedBox(
                         width: 282,
                         height: 316, // Container height
-                        child: SingleChildScrollView(
-                          child: Column(
-                            children: [
-                              ..._buildTaskList(task),
-                            ],
-                          ),
-                        ),
+                        child: task.steps.isEmpty
+                            ? const Center(child: Text('暂无任务步骤'))
+                            : ListView(
+                                padding: EdgeInsets.zero,
+                                children: _buildTaskList(task),
+                              ),
                       ),
                     ),
                     
@@ -216,46 +215,49 @@ class _TaskDetailPageState extends State<TaskDetailPage> {
       final index = entry.key;
       final step = entry.value;
       
-      return Container(
-        margin: const EdgeInsets.only(bottom: 7),
-        child: _buildTaskItem(index + 1, step.content, step.done, 170.0),
+      return SizedBox(
+        width: 282,
+        height: 62,
+        child: Stack(
+          children: [
+            // Task item
+            Positioned(
+              left: 0,
+              top: 0,
+              child: _buildTaskItem(
+                index + 1, 
+                step.content, 
+                step.done, 
+                0,
+                task: task,
+                step: step,
+              ),
+            ),
+            // Checkmark - positioned according to CSS
+            Positioned(
+              left: 237, // 289 - 52 = 237
+              top: 11,   // 181 - 170 = 11
+              child: GestureDetector(
+                onTap: () {
+                  context.read<TaskBloc>().add(ToggleStep(
+                    task.id,
+                    step.id,
+                    !step.done,
+                  ));
+                },
+                child: _buildCheckmarkWidget(step.done),
+              ),
+            ),
+          ],
+        ),
       );
     }).toList();
   }
 
-  List<Widget> _buildTaskItems(Task task) {
-    // Limit to 9 steps maximum
-    final limitedSteps = task.steps.take(9).toList();
-    return limitedSteps.asMap().entries.map((entry) {
-      final index = entry.key;
-      final step = entry.value;
-      final topPosition = 170 + index * 62;
-      
-      return Positioned(
-        left: 52,
-        top: topPosition.toDouble(),
-        child: _buildTaskItem(index + 1, step.content, step.done, topPosition.toDouble()),
-      );
-    }).toList();
-  }
+  // These methods are now integrated into _buildTaskList
 
-  List<Widget> _buildCheckmarks(Task task) {
-    // Limit to 9 steps maximum
-    final limitedSteps = task.steps.take(9).toList();
-    return limitedSteps.asMap().entries.map((entry) {
-      final index = entry.key;
-      final step = entry.value;
-      final topPosition = 181 + index * 62;
-      
-      return Positioned(
-        left: 289,
-        top: topPosition.toDouble(),
-        child: _buildCheckmarkWidget(step.done),
-      );
-    }).toList();
-  }
-
-  Widget _buildTaskItem(int number, String text, bool completed, double top) {
+  Widget _buildTaskItem(int number, String text, bool completed, double top, 
+      {VoidCallback? onTap, required Task task, required TaskStep step}) {
     // Dynamic content based on task completion
     final backgroundColor = completed ? const Color(0xFF646464) : Colors.white;
     final textColor = completed ? const Color(0xFF999999) : Colors.black;
