@@ -5,6 +5,7 @@ import '../../bloc/task/task_event.dart';
 import '../../bloc/task/task_state.dart';
 import '../../models/task.dart';
 import '../../navigation/app_router.dart';
+import '../../services/api_service.dart';
 
 class TaskDetailPage extends StatefulWidget {
   final String? taskId;
@@ -22,6 +23,31 @@ class _TaskDetailPageState extends State<TaskDetailPage> {
     context.read<TaskBloc>().add(LoadTasks());
   }
 
+  Future<void> _navigateToCompletionReview(BuildContext context, Task task) async {
+    try {
+      // Get the API service from the context
+      final apiService = ApiService();
+      final summary = await apiService.completeTask(task.id);
+      
+      if (mounted) {
+        Navigator.pushNamed(
+          context,
+          AppRouter.completionReview,
+          arguments: {
+            'taskId': task.id,
+            'summary': summary,
+          },
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error completing task: ${e.toString()}')),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,90 +56,99 @@ class _TaskDetailPageState extends State<TaskDetailPage> {
         child: SizedBox(
           width: 400,
           height: 600,
-          child: BlocBuilder<TaskBloc, TaskState>(
-            builder: (context, state) {
-              if (state is TaskLoading) {
-                return const Center(child: CircularProgressIndicator());
+          child: BlocListener<TaskBloc, TaskState>(
+            listener: (context, state) async {
+              print('TaskBloc state changed: ${state.runtimeType}');
+              if (state is TaskWithAllStepsCompleted) {
+                print('Navigating to completion review for task: ${state.task.id}');
+                await _navigateToCompletionReview(context, state.task);
               }
-              
-              if (state is TaskLoaded) {
-                if (widget.taskId == null) {
-                  return const Center(child: Text('No task ID provided'));
+            },
+            child: BlocBuilder<TaskBloc, TaskState>(
+              builder: (context, state) {
+                if (state is TaskLoading) {
+                  return const Center(child: CircularProgressIndicator());
                 }
                 
-                final task = state.tasks.firstWhere(
-                  (t) => t.id == widget.taskId,
-                  orElse: () => Task(
-                    id: '',
-                    title: 'Task not found',
-                    description: 'Task not found or has been deleted',
-                    estimatedMinutes: 0,
-                    createdAt: DateTime.now(),
-                    steps: [],
-                    status: TaskStatus.pending,
-                    isCompleted: false,
-                  ),
-                );
+                if (state is TaskLoaded) {
+                  if (widget.taskId == null) {
+                    return const Center(child: Text('No task ID provided'));
+                  }
+                  
+                  final task = state.tasks.firstWhere(
+                    (t) => t.id == widget.taskId,
+                    orElse: () => Task(
+                      id: '',
+                      title: 'Task not found',
+                      description: 'Task not found or has been deleted',
+                      estimatedMinutes: 0,
+                      createdAt: DateTime.now(),
+                      steps: [],
+                      status: TaskStatus.pending,
+                      isCompleted: false,
+                    ),
+                  );
 
-                if (task.id.isEmpty) {
-                  return const Center(child: Text('Task not found'));
+                  if (task.id.isEmpty) {
+                    return const Center(child: Text('Task not found'));
+                  }
+
+                  return Stack(
+                    children: [
+                      // Main container
+                      _buildMainContainer(),
+                      
+                      // Header text
+                      _buildHeaderText(task),
+                      
+                      // Scrollable task list
+                      Positioned(
+                        left: 52,
+                        top: 170,
+                        child: SizedBox(
+                          width: 282,
+                          height: 316, // Container height
+                          child: task.steps.isEmpty
+                              ? const Center(child: Text('暂无任务步骤'))
+                              : ListView(
+                                  padding: EdgeInsets.zero,
+                                  children: _buildTaskList(task),
+                                ),
+                        ),
+                      ),
+                      
+                      // Yellow accent bar
+                      Positioned(
+                        left: 341,
+                        top: 178,
+                        child: _pixelBox(8, 171, const Color(0xFFCFFF0B)),
+                      ),
+                      
+                      // Bottom buttons
+                      _buildBottomButtons(task),
+                    ],
+                  );
                 }
-
-                return Stack(
-                  children: [
-                    // Main container
-                    _buildMainContainer(),
-                    
-                    // Header text
-                    _buildHeaderText(task),
-                    
-                    // Scrollable task list
-                    Positioned(
-                      left: 52,
-                      top: 170,
-                      child: SizedBox(
-                        width: 282,
-                        height: 316, // Container height
-                        child: task.steps.isEmpty
-                            ? const Center(child: Text('暂无任务步骤'))
-                            : ListView(
-                                padding: EdgeInsets.zero,
-                                children: _buildTaskList(task),
-                              ),
+                
+                if (state is TaskError) {
+                  return Center(
+                    child: Container(
+                      width: 300,
+                      height: 200,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        border: Border.all(color: Colors.black),
+                      ),
+                      child: Center(
+                        child: Text(state.message),
                       ),
                     ),
-                    
-                    // Yellow accent bar
-                    Positioned(
-                      left: 341,
-                      top: 178,
-                      child: _pixelBox(8, 171, const Color(0xFFCFFF0B)),
-                    ),
-                    
-                    // Bottom buttons
-                    _buildBottomButtons(task),
-                  ],
-                );
-              }
-              
-              if (state is TaskError) {
-                return Center(
-                  child: Container(
-                    width: 300,
-                    height: 200,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      border: Border.all(color: Colors.black),
-                    ),
-                    child: Center(
-                      child: Text(state.message),
-                    ),
-                  ),
-                );
-              }
+                  );
+                }
 
-              return const Center(child: CircularProgressIndicator());
-            },
+                return const Center(child: CircularProgressIndicator());
+              },
+            ),
           ),
         ),
       ),

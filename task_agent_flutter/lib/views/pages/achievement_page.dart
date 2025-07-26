@@ -8,7 +8,7 @@ import 'package:task_agent_flutter/theme/app_theme.dart';
 import 'package:task_agent_flutter/widgets/lucian_components.dart';
 
 class AchievementPage extends StatefulWidget {
-  const AchievementPage({Key? key}) : super(key: key);
+  const AchievementPage({super.key});
 
   @override
   State<AchievementPage> createState() => _AchievementPageState();
