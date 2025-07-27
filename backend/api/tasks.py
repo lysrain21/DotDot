@@ -13,7 +13,19 @@ router = APIRouter()
 async def create_task(task: TaskCreate):
     """创建新任务并自动拆解"""
     try:
-        return TaskService.create(task.title)
+        if task.use_ai:
+            # Use enhanced AI decomposition with configuration
+            return TaskService.create_with_ai(
+                title=task.title,
+                max_steps=task.max_steps,
+                prompt=task.prompt,
+                tools=task.tools,
+                context=task.context,
+                constraints=task.constraints
+            )
+        else:
+            # Regular task creation
+            return TaskService.create(task.title)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

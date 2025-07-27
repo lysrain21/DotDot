@@ -25,9 +25,21 @@ class _TaskDetailPageState extends State<TaskDetailPage> {
 
   Future<void> _navigateToCompletionReview(BuildContext context, Task task) async {
     try {
+      // Show loading indicator
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('正在生成完成总结...')),
+        );
+      }
+      
       // Get the API service from the context
       final apiService = ApiService();
       final summary = await apiService.completeTask(task.id);
+      
+      // Hide any snackbars
+      if (mounted) {
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      }
       
       if (mounted) {
         Navigator.pushNamed(
@@ -41,6 +53,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> {
       }
     } catch (e) {
       if (mounted) {
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Error completing task: ${e.toString()}')),
         );
@@ -60,7 +73,12 @@ class _TaskDetailPageState extends State<TaskDetailPage> {
             listener: (context, state) async {
               print('TaskBloc state changed: ${state.runtimeType}');
               if (state is TaskWithAllStepsCompleted) {
-                print('Navigating to completion review for task: ${state.task.id}');
+                print('TaskWithAllStepsCompleted triggered for task: ${state.task.id}');
+                print('Task title: ${state.task.title}');
+                print('All steps completed: ${state.task.steps.every((s) => s.done)}');
+                
+                // Add a small delay to ensure UI is ready
+                await Future.delayed(const Duration(milliseconds: 300));
                 await _navigateToCompletionReview(context, state.task);
               }
             },
@@ -402,13 +420,19 @@ class _TaskDetailPageState extends State<TaskDetailPage> {
             height: 33,
             color: checkmarkColor,
           ),
-          // Checkmark pixels (Group 23)
-          Positioned(left: 289 - 289, top: 181 - 181, child: _pixelBox(6.6, 6.6, const Color(0xFFCFFF0B))),
-          Positioned(left: 315.4 - 289, top: 181 - 181, child: _pixelBox(6.6, 6.6, const Color(0xFFCFFF0B))),
-          Positioned(left: 315.4 - 289, top: 207.4 - 181, child: _pixelBox(6.6, 6.6, const Color(0xFFCFFF0B))),
-          Positioned(left: 289 - 289, top: 207.4 - 181, child: _pixelBox(6.6, 6.6, const Color(0xFFCFFF0B))),
-          Positioned(left: 302 - 289, top: 201 - 181, child: _pixelBox(6.5, 6.5, const Color(0xFFCFFF0B))),
-          Positioned(left: 308.5 - 289, top: 194.5 - 181, child: _pixelBox(6.5, 6.5, const Color(0xFFCFFF0B))),
+          // Group 23 - Exact CSS checkmark pixels
+          // Rectangle 1
+          Positioned(left: 0, top: 0, child: _pixelBox(6.6, 6.6, const Color(0xFFCFFF0B))),
+          // Rectangle 2
+          Positioned(left: 26.4, top: 0, child: _pixelBox(6.6, 6.6, const Color(0xFFCFFF0B))),
+          // Rectangle 3
+          Positioned(left: 26.4, top: 26.4, child: _pixelBox(6.6, 6.6, const Color(0xFFCFFF0B))),
+          // Rectangle 4
+          Positioned(left: 0, top: 26.4, child: _pixelBox(6.6, 6.6, const Color(0xFFCFFF0B))),
+          // Rectangle 5
+          Positioned(left: 13, top: 20, child: _pixelBox(6.5, 6.5, const Color(0xFFCFFF0B))),
+          // Rectangle 6
+          Positioned(left: 19.5, top: 13.5, child: _pixelBox(6.5, 6.5, const Color(0xFFCFFF0B))),
         ],
       ),
     );

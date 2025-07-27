@@ -24,6 +24,12 @@ class StepResponse(BaseModel):
 
 class TaskCreate(BaseModel):
     title: str
+    use_ai: bool = False
+    max_steps: int = 9
+    prompt: Optional[str] = None
+    tools: Optional[List[str]] = None
+    context: Optional[str] = None
+    constraints: Optional[str] = None
 
 class TaskResponse(BaseModel):
     id: UUID

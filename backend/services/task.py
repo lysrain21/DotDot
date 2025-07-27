@@ -180,6 +180,86 @@ class TaskService:
             return task
 
     @staticmethod
+    def create_with_ai(
+        title: str, 
+        max_steps: int = 9, 
+        prompt: Optional[str] = None,
+        tools: Optional[List[str]] = None,
+        context: Optional[str] = None,
+        constraints: Optional[str] = None
+    ) -> Dict[str, Any]:
+        """使用增强的AI配置创建任务"""
+        with Session(engine) as session:
+            # Create skeleton task
+            task = Task(title=title)
+            session.add(task)
+            session.commit()
+            session.refresh(task)
+            
+            # Build enhanced prompt
+            enhanced_prompt = prompt or title
+            if context:
+                enhanced_prompt = f"任务背景：{context}\n\n{enhanced_prompt}"
+            if constraints:
+                enhanced_prompt = f"{enhanced_prompt}\n\n限制条件：{constraints}"
+            if tools:
+                tools_str = "、".join(tools)
+                enhanced_prompt = f"使用以下工具：{tools_str}\n\n{enhanced_prompt}"
+            
+            # Auto-decompose with Agent using enhanced prompt
+            agent = AgentService()
+            steps_data = agent.suggest_steps(enhanced_prompt, max_steps=max_steps)
+            total_minutes = agent.estimate_total_duration(steps_data)
+            
+            # Update task with estimated time
+            task.estimated_minutes = total_minutes
+            session.add(task)
+            
+            # Create steps
+            for idx, step_data in enumerate(steps_data):
+                step = Step(
+                    task_id=task.id,
+                    content=step_data["content"],
+                    tool=step_data.get("tool"),
+                    theme=step_data.get("theme"),
+                    deliverable=step_data.get("deliverable"),
+                    estimate_minutes=step_data["estimate_minutes"],
+                    order_idx=idx
+                )
+                session.add(step)
+            
+            session.commit()
+            session.refresh(task)
+            
+            # Load steps
+            steps = session.exec(
+                select(Step).where(Step.task_id == task.id).order_by(Step.order_idx)
+            ).all()
+            
+            # Return dict with steps
+            return {
+                'id': str(task.id),
+                'title': task.title,
+                'estimated_minutes': task.estimated_minutes,
+                'created_at': task.created_at.isoformat(),
+                'completed_at': task.completed_at.isoformat() if task.completed_at else None,
+                'steps': [
+                    {
+                        'id': str(step.id),
+                        'task_id': str(step.task_id),
+                        'content': step.content,
+                        'tool': step.tool,
+                        'theme': step.theme,
+                        'deliverable': step.deliverable,
+                        'estimate_minutes': step.estimate_minutes,
+                        'done': step.done,
+                        'order_idx': step.order_idx
+                    }
+                    for step in steps
+                ]
+            }
+
+    @staticmethod
     def get_incomplete_tasks() -> List[Dict[str, Any]]:
         with Session(engine) as session:
             tasks = session.exec(

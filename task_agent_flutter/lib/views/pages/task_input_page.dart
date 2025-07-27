@@ -104,6 +104,13 @@ class _TaskInputPageState extends State<TaskInputPage> {
           top: 376,
           child: _buildStartButton(),
         ),
+        
+        // Config tool button
+        Positioned(
+          left: 216,
+          top: 340,
+          child: _buildConfigButton(),
+        ),
       ],
     );
   }
@@ -129,10 +136,46 @@ class _TaskInputPageState extends State<TaskInputPage> {
           
           
           
-          // Updated corner pixel for new input field
+          // Rectangle 202 - Inner black box (exact CSS positioning)
           Positioned(
-            left: 75 - 57 + 245 - 8, // right edge of new input field
-            top: 241 - 227 + 85 - 8, // bottom edge of new input field
+            left: 73 - 57, // 73px from left edge (73-57=16px from Group 49 left)
+            top: 238 - 227, // 238px from top edge (238-227=11px from Group 49 top)
+            child: Container(
+              width: 271,
+              height: 112,
+              color: const Color(0xFF3B3B3B),
+            ),
+          ),
+          
+          // Subtract - White border box (exact CSS positioning)
+          Positioned(
+            left: 57 - 57, // 57px from left edge
+            top: 227 - 227, // 227px from top edge
+            child: Container(
+              width: 282,
+              height: 117,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                border: Border.all(color: const Color(0xFF3B3B3B), width: 1),
+              ),
+            ),
+          ),
+          
+          // Rectangle 194 - White background (exact CSS positioning)
+          Positioned(
+            left: 57 - 57, // 57px from left edge
+            top: 227 - 227, // 227px from top edge
+            child: Container(
+              width: 282,
+              height: 117,
+              color: Colors.white,
+            ),
+          ),
+          
+          // Rectangle 201 - Corner pixel (exact CSS positioning)
+          Positioned(
+            left: 331 - 57, // 331px from left edge (331-57=274px from Group 49 left)
+            top: 336 - 227, // 336px from top edge (336-227=109px from Group 49 top)
             child: Container(
               width: 8,
               height: 8,
@@ -140,48 +183,86 @@ class _TaskInputPageState extends State<TaskInputPage> {
             ),
           ),
           
-          // Enhanced TextField area - removed black bar, larger text
+          // TextField with exact CSS positioning
           Positioned(
-            left: 75 - 57, // 18px from left of Group 49
-            top: 241 - 227, // 14px from top of Group 49
-            child: Container(
-              width: 245,
-              height: 85,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border.all(color: const Color(0xFF3B3B3B), width: 2),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                child: TextField(
-                  controller: _taskController,
-                  maxLines: 3,
-                  textAlignVertical: TextAlignVertical.top,
-                  decoration: const InputDecoration(
-                    hintText: '我想在xx分钟内做一个xxx....',
-                    hintStyle: TextStyle(
-                      color: Color(0xFF9E9E9E),
-                      fontSize: 16,
-                      fontFamily: 'Source Han Sans CN',
-                      fontWeight: FontWeight.w400,
-                      height: 1.4,
-                    ),
-                    border: InputBorder.none,
-                    contentPadding: EdgeInsets.zero,
-                    isDense: true,
-                  ),
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontFamily: 'Source Han Sans CN',
+            left: 75 - 57, // 75px from left edge (75-57=18px from Group 49 left)
+            top: 241 - 227, // 241px from top edge (241-227=14px from Group 49 top)
+            child: SizedBox(
+              width: 154,
+              height: 15,
+              child: TextField(
+                controller: _taskController,
+                maxLines: 1,
+                decoration: const InputDecoration(
+                  hintText: '我想在xx分钟内做一个xxx....',
+                  hintStyle: TextStyle(
+                    color: Color(0xFFD7D7D7),
+                    fontSize: 12,
+                    fontFamily: 'Inter',
                     fontWeight: FontWeight.w400,
-                    color: Color(0xFF2D2D2D),
-                    height: 1.4,
+                    height: 15 / 12,
                   ),
+                  border: InputBorder.none,
+                  contentPadding: EdgeInsets.zero,
+                ),
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontFamily: 'Inter',
+                  fontWeight: FontWeight.w400,
+                  color: Colors.black,
+                  height: 15 / 12,
                 ),
               ),
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildConfigButton() {
+    return GestureDetector(
+      onTap: () {
+        Navigator.pushNamed(context, AppRouter.configTool);
+      },
+      child: SizedBox(
+        width: 120,
+        height: 32,
+        child: Stack(
+          children: [
+            // Shadow
+            Positioned(
+              left: 4,
+              top: 4,
+              child: Container(
+                width: 116,
+                height: 28,
+                color: const Color(0xFF3B3B3B),
+              ),
+            ),
+            
+            // Main button
+            Container(
+              width: 116,
+              height: 28,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                border: Border.all(color: const Color(0xFF3B3B3B), width: 1),
+              ),
+              child: const Center(
+                child: Text(
+                  'AI配置',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontFamily: 'Source Han Sans CN',
+                    fontWeight: FontWeight.w400,
+                    color: Color(0xFF3B3B3B),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
