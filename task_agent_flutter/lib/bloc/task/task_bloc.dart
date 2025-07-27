@@ -5,6 +5,7 @@ import 'package:equatable/equatable.dart';
 
 import '../../models/task.dart';
 import '../../services/api_service.dart';
+import '../../services/ai_config_service.dart';
 import 'task_event.dart';
 import 'task_state.dart';
 
@@ -41,8 +42,12 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   ) async {
     try {
       if (event.useAI) {
-        // For now, use the regular AI creation since streaming might not be supported by backend
-        final newTask = await apiService.createTaskWithAI(event.title);
+        // Load AI configuration and enhance prompt
+        await AIConfigService.loadConfig();
+        final enhancedData = AIConfigService.getEnhancedTaskData(event.title);
+        
+        // Use enhanced prompt for AI task creation
+        final newTask = await apiService.createTaskWithEnhancedAI(enhancedData);
         if (state is TaskLoaded) {
           final currentTasks = (state as TaskLoaded).tasks;
           emit(TaskLoaded([newTask, ...currentTasks]));

@@ -49,6 +49,26 @@ class ApiService {
     }
   }
 
+  Future<Task> createTaskWithEnhancedAI(Map<String, dynamic> enhancedData) async {
+    try {
+      final response = await _dio.post(
+        '/tasks/',
+        data: {
+          'title': enhancedData['title'],
+          'use_ai': true,
+          'max_steps': 9,
+          'prompt': enhancedData['prompt'],
+          'tools': enhancedData['tools'],
+          'context': enhancedData['context'],
+          'constraints': enhancedData['constraints'],
+        },
+      );
+      return Task.fromJson(response.data);
+    } catch (e) {
+      throw Exception('Failed to create task with enhanced AI: $e');
+    }
+  }
+
   Future<Task> createTaskWithAIStreaming(String title, Function(List<String>) onStepGenerated) async {
     try {
       final response = await _dio.post(
